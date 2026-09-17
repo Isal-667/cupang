@@ -87,8 +87,9 @@ def preprocess_image(image_path):
 # ==============================
 # Prediction
 # ==============================
-THRESHOLD = 0.70
+
 def predict_image(image_path):
+
     image = preprocess_image(image_path)
     prediction = model.predict(image, verbose=0)[0]
     confidence = float(np.max(prediction))
@@ -100,47 +101,10 @@ def predict_image(image_path):
     }
 
     # ===================================================
-    # Tidak Dikenali
-    # ===================================================
-
-    if confidence < THRESHOLD:
-
-        return {
-
-            "class": "Tidak Dikenali",
-            
-            "confidence": round(confidence * 100, 2),
-
-            "status": "Keyakinan Rendah",
-
-            "description": (
-                "Sistem tidak dapat mengenali gambar sebagai salah satu "
-                "jenis ikan cupang yang didukung. Pastikan gambar merupakan "
-                "ikan cupang Dumbo Ear, Halfmoon, atau Plakat."
-            ),
-
-            "characteristics": [
-
-                "Gunakan gambar ikan cupang yang jelas.",
-
-                "Pastikan hanya terdapat satu ikan pada gambar.",
-
-                "Hindari gambar buram atau terlalu gelap.",
-
-                "Sistem hanya mengenali Dumbo Ear, Halfmoon, dan Plakat."
-
-            ],
-
-            "probabilities": probabilities
-
-        }
-
-    # ===================================================
-    # Jika dikenali
+    # Hasil Prediksi (Tanpa Threshold)
     # ===================================================
 
     predicted_class = CLASS_NAMES[class_index]
-
     info = FISH_INFO[predicted_class]
 
     if confidence >= 0.90:
@@ -148,13 +112,12 @@ def predict_image(image_path):
     elif confidence >= 0.80:
         status = "Yakin"
     else:
-        status = "Cukup Yakin"
+        status = "Kurang Yakin" # Anda bisa menyesuaikan teks status ini
 
     return {
-
         "class": predicted_class,
         "confidence": round(confidence * 100, 2),
-        "status":status,
+        "status": status,
         "description": info["description"],
         "characteristics": info["characteristics"],
         "probabilities": probabilities
